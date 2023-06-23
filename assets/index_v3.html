@@ -28,7 +28,21 @@
     #list a {
       margin: 1em;
     }
+    #list,.site-link {
+      display: flex;
+      flex-flow: row wrap;
+    }
+    .site-link {
+       width: 128px;
+       height: 128px;
+       flex: none;
+       display: flex;
+       align-items: center;
+       background: rgba(241, 242, 243,1);
+       justify-content: center;
+    }
   </style>
+  <script src="./scripts/history.js"></script>
 </head>
 <body>
   <div class="box">
@@ -64,6 +78,8 @@
       if (text) {
         const url = './-----' + text
         open(url, '_blank', 'noopener,noreferrer')
+        addSiteToLocalStorage(text);
+        showIcons()
       }
     }
     txtURL.onkeypress = function(e) {
@@ -72,7 +88,7 @@
       }
     }
     txtURL.setSelectionRange(0, txtURL.value.length)
-
+    showIcons()
 
     function onSwMsg(e) {
       const [cmd, msg] = e.data
@@ -116,17 +132,12 @@
       ctl.postMessage([cmd, val])
     }
 
-    const SITE_LIST = [
-      ['github', ''],
-    ]
-
-    function showIcons() {
-      list.innerHTML = SITE_LIST.map(v => {
-        let [id, url] = v
-        url = url || `www.${id}.com/`
+    function showIcons(siteList = getHistorySiteListFromLocalStorage()) {
+      list.innerHTML = siteList.map(url => {
         return `\
-<a rel="noopener noreferrer" href=./-----https://${url}>\
-<img width=128 height=128 src=__sys__/assets/ico/${id}.png></a>`
+<a rel="noopener noreferrer" class="site-link" href=./-----${url}>
+  <span>${url}</span>
+  </a>`
       }).join('')
     }
 
